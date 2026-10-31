@@ -30,6 +30,13 @@ juce::AudioProcessorValueTreeState::ParameterLayout SpliceGrooveProcessor::creat
                                                            NormalisableRange<float> (0.0f, 1.5f), 0.9f));
         layout.add (std::make_unique<AudioParameterBool> (ParameterID { laneParamId ("mute", l), 1 },
                                                           String (laneName (l)) + " Mute", false));
+        layout.add (std::make_unique<AudioParameterFloat> (ParameterID { laneParamId ("tune", l), 1 },
+                                                           String (laneName (l)) + " Tune",
+                                                           NormalisableRange<float> (-12.0f, 12.0f, 0.1f), 0.0f,
+                                                           AudioParameterFloatAttributes().withLabel ("st")));
+        layout.add (std::make_unique<AudioParameterFloat> (ParameterID { laneParamId ("decay", l), 1 },
+                                                           String (laneName (l)) + " Decay",
+                                                           NormalisableRange<float> (0.0f, 1.0f), 1.0f));
     }
     return layout;
 }
@@ -52,6 +59,8 @@ SpliceGrooveProcessor::SpliceGrooveProcessor()
     {
         pLaneVol[(size_t) l]  = apvts.getRawParameterValue (laneParamId ("vol", l));
         pLaneMute[(size_t) l] = apvts.getRawParameterValue (laneParamId ("mute", l));
+        pLaneTune[(size_t) l] = apvts.getRawParameterValue (laneParamId ("tune", l));
+        pLaneDecay[(size_t) l] = apvts.getRawParameterValue (laneParamId ("decay", l));
     }
 
     // A first groove so the plugin is never empty
@@ -225,7 +234,13 @@ void SpliceGrooveProcessor::startVoice (int lane, float velocity)
     const float vol = pLaneVol[(size_t) lane]->load();
     target->sample = std::move (s);
     target->pos = 0.0;
-    target->inc = target->sample->sampleRate / currentSampleRate;
+    const float semis = pLaneTune[(size_t) lane]->load();
+    target->inc = target->sample->sampleRate / currentSampleRate * std::pow (2.0, semis / 12.0);
+
+    // DECAY: 1.0 = whole sample, lower = shorter (30 ms .. 3 s)
+    const float decay = pLaneDecay[(size_t) lane]->load();
+    target->envPos = 0;
+    target->envLen = decay >= 0.99f ? 0 : (int) (currentSampleRate * 0.03 * std::pow (100.0, (double) decay));
     target->gain = std::pow (juce::jlimit (0.0f, 1.0f, velocity), 1.4f) * vol;
     target->release = -1;
     target->active = true;
@@ -255,6 +270,13 @@ void SpliceGrooveProcessor::renderVoices (juce::AudioBuffer<float>& out, int sta
 
                 const float frac = (float) (v.pos - ip);
                 float g = v.gain * master;
+                if (v.envLen > 0)
+                {
+                    if (v.envPos >= v.envLen) { v.active = false; break; }
+                    const float e = 1.0f - (float) v.envPos / (float) v.envLen;
+                    g *= e * e;
+                    ++v.envPos;
+                }
                 if (v.release >= 0)
                 {
                     if (v.release == 0) { v.active = false; break; }

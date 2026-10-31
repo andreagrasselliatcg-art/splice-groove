@@ -65,17 +65,20 @@ Poi in Logic: **nuova traccia Software Instrument → AU Instruments → Andrea 
 | **Genere** | Cambiando genere ottieni un nuovo groove, un nuovo kit e lo swing adatto |
 | **GENERATE** | Nuovo pattern dello stesso genere, mantenendo i suoni |
 | **NEW SOUNDS** | Nuovo kit dalla tua libreria Splice |
-| **Rnd** (per corsia) | Cambia solo quel suono |
+| **TUNE / DECAY / LEVEL** (per strumento) | Intonazione ±12 semitoni, lunghezza del suono, volume |
+| **SELECT** + 16 tasti step | Scegli lo strumento e programmalo con i 16 tasti; **BAR 1 / BAR 2** per la battuta |
+| **CLEAR** | Svuota lo strumento selezionato |
+| **RND** (per strumento) | Cambia solo quel suono |
 | Clic sul nome del campione | Ascolta il suono |
 | **DENSITY** | Da groove minimale a groove pieno, con fill a fine loop |
-| **SWING** | 50% dritto, fino a 75% molto shuffle (Deep House ~60%) |
+| **SHUFFLE** | 50% dritto, fino a 75% molto shuffle (Deep House ~60%) |
 | **HUMANIZE** | Variazione di velocity |
-| **SEQ ON** | Acceso: il plugin suona il pattern a tempo col play di Logic |
-| **PREVIEW** | Ascolta il pattern anche a Logic fermo |
+| **SEQ** | Acceso: il plugin suona il pattern a tempo col play di Logic |
+| **START / STOP** | Ascolta il pattern anche a Logic fermo |
 | **DRAG MIDI TO LOGIC** | Trascina il pattern (2/4/8/16 battute) su una traccia |
-| **Save MIDI...** | Salva il file .mid |
+| **SAVE MIDI** | Salva il file .mid |
 
-**Editing della griglia:** clic = accendi/spegni · Shift+clic = accento · clic destro = cambia velocity · trascina = disegna.
+**Editing:** con i 16 tasti o direttamente sul display del pattern. Clic = accendi/spegni · Shift+clic = accento · clic destro = cambia velocity · trascina sul display = disegna.
 
 ### Due modi di lavorare
 - **Plugin come drum machine:** lascia SEQ ON e premi play in Logic. Il pattern (2 battute) va in loop a tempo.

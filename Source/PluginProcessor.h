@@ -84,6 +84,8 @@ private:
         float gain = 0.0f;
         int release = -1;
         int releaseLen = 1;
+        int envPos = 0;
+        int envLen = 0;      // 0 = no decay envelope (full sample)
         bool active = false;
     };
 
@@ -127,6 +129,8 @@ private:
     std::atomic<float>* pGenre = nullptr;
     std::array<std::atomic<float>*, sg::kNumLanes> pLaneVol {};
     std::array<std::atomic<float>*, sg::kNumLanes> pLaneMute {};
+    std::array<std::atomic<float>*, sg::kNumLanes> pLaneTune {};
+    std::array<std::atomic<float>*, sg::kNumLanes> pLaneDecay {};
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SpliceGrooveProcessor)
 };
