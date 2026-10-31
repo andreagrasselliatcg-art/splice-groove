@@ -28,7 +28,14 @@ hai già scaricato con l'app Splice, che li salva in locale (di default in `~/Sp
 
 ## Installazione
 
-Logic Pro usa solo plugin **Audio Unit (AU)**, che vanno compilati su un Mac. Ci sono due strade.
+### Il modo più semplice: installer .pkg
+Scarica **`SpliceGroove-x.y.z-macOS.pkg`** dalla pagina
+[Releases](https://github.com/andreagrasselliatcg-art/splice-groove/releases/latest), poi fai
+**tasto destro → Apri** e segui l'installazione. Il plugin va in `/Library/Audio/Plug-Ins`
+(AU + VST3, Apple Silicon + Intel).
+A ogni push su `main` GitHub ricompila il plugin, lo valida con `auval` e pubblica una nuova Release.
+
+Logic Pro usa solo plugin **Audio Unit (AU)**, che vanno compilati su un Mac. Se vuoi compilarli tu, ci sono due strade.
 
 ### Opzione A: senza installare nulla (build automatica su GitHub)
 
