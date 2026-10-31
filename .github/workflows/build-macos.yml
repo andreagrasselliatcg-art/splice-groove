@@ -1,0 +1,43 @@
+name: Build macOS (AU + VST3)
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build AU + VST3 (universal: Apple Silicon + Intel)
+        run: cmake --build build --config Release --target SpliceGroove_AU SpliceGroove_VST3 -j 3
+
+      - name: Ad-hoc code signing
+        run: |
+          codesign --force --deep -s - "build/SpliceGroove_artefacts/Release/AU/Splice Groove.component"
+          codesign --force --deep -s - "build/SpliceGroove_artefacts/Release/VST3/Splice Groove.vst3"
+
+      - name: Validate Audio Unit (auval)
+        run: |
+          mkdir -p ~/Library/Audio/Plug-Ins/Components
+          cp -R "build/SpliceGroove_artefacts/Release/AU/Splice Groove.component" ~/Library/Audio/Plug-Ins/Components/
+          killall -9 AudioComponentRegistrar || true
+          sleep 2
+          auval -v aumu SpGv Agrs
+
+      - name: Package
+        run: |
+          mkdir -p dist
+          cp -R "build/SpliceGroove_artefacts/Release/AU/Splice Groove.component" dist/
+          cp -R "build/SpliceGroove_artefacts/Release/VST3/Splice Groove.vst3" dist/
+          cp install_mac.command dist/
+          cd dist && zip -r -y ../SpliceGroove-macOS.zip .
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: SpliceGroove-macOS
+          path: SpliceGroove-macOS.zip
