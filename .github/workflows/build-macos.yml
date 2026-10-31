@@ -18,30 +18,39 @@ jobs:
         run: cmake -B build -DCMAKE_BUILD_TYPE=Release
 
       - name: "Build AU + VST3 (universal: Apple Silicon + Intel)"
-        run: cmake --build build --config Release --target SpliceGroove_AU SpliceGroove_VST3 -j 3
+        run: cmake --build build --config Release --target GrooveX_AU GrooveX_VST3 -j 3
 
       - name: Ad-hoc code signing
         run: |
-          codesign --force --deep -s - "build/SpliceGroove_artefacts/Release/AU/Splice Groove.component"
-          codesign --force --deep -s - "build/SpliceGroove_artefacts/Release/VST3/Splice Groove.vst3"
-          lipo -info "build/SpliceGroove_artefacts/Release/AU/Splice Groove.component/Contents/MacOS/Splice Groove"
+          codesign --force --deep -s - "build/GrooveX_artefacts/Release/AU/Groove-X.component"
+          codesign --force --deep -s - "build/GrooveX_artefacts/Release/VST3/Groove-X.vst3"
+          lipo -info "build/GrooveX_artefacts/Release/AU/Groove-X.component/Contents/MacOS/Groove-X"
 
       - name: Validate Audio Unit (auval)
         run: |
           mkdir -p ~/Library/Audio/Plug-Ins/Components
-          rm -rf ~/Library/Audio/Plug-Ins/Components/"Splice Groove.component"
-          cp -R "build/SpliceGroove_artefacts/Release/AU/Splice Groove.component" ~/Library/Audio/Plug-Ins/Components/
+          rm -rf ~/Library/Audio/Plug-Ins/Components/"Groove-X.component"
+          cp -R "build/GrooveX_artefacts/Release/AU/Groove-X.component" ~/Library/Audio/Plug-Ins/Components/
           killall -9 AudioComponentRegistrar || true
           sleep 3
-          auval -v aumu SpGv Agrs
+          auval -v aumu GrvX Tntk
 
       - name: Build installer .pkg
         run: |
           VERSION="1.0.${GITHUB_RUN_NUMBER}"
           mkdir -p pkgroot/Components pkgroot/VST3 pkgscripts
-          cp -R "build/SpliceGroove_artefacts/Release/AU/Splice Groove.component" pkgroot/Components/
-          cp -R "build/SpliceGroove_artefacts/Release/VST3/Splice Groove.vst3" pkgroot/VST3/
-          printf '#!/bin/bash\nkillall -9 AudioComponentRegistrar 2>/dev/null || true\nexit 0\n' > pkgscripts/postinstall
+          cp -R "build/GrooveX_artefacts/Release/AU/Groove-X.component" pkgroot/Components/
+          cp -R "build/GrooveX_artefacts/Release/VST3/Groove-X.vst3" pkgroot/VST3/
+          cat > pkgscripts/postinstall <<'POST'
+          #!/bin/bash
+          # remove the old "Splice Groove" version (same plugin, previous name)
+          rm -rf "/Library/Audio/Plug-Ins/Components/Splice Groove.component" "/Library/Audio/Plug-Ins/VST3/Splice Groove.vst3"
+          for h in /Users/*; do
+            rm -rf "$h/Library/Audio/Plug-Ins/Components/Splice Groove.component" "$h/Library/Audio/Plug-Ins/VST3/Splice Groove.vst3"
+          done
+          killall -9 AudioComponentRegistrar 2>/dev/null || true
+          exit 0
+          POST
           chmod +x pkgscripts/postinstall
           pkgbuild --analyze --root pkgroot components.plist
           python3 -c "import plistlib;f='components.plist';d=plistlib.load(open(f,'rb'))
@@ -54,33 +63,33 @@ jobs:
                    --component-plist components.plist \
                    --install-location /Library/Audio/Plug-Ins \
                    --scripts pkgscripts \
-                   --identifier com.andreagrasselli.splicegroove.pkg \
+                   --identifier com.tunetalks.groovex.pkg \
                    --version "$VERSION" \
-                   "SpliceGroove-${VERSION}-macOS.pkg"
-          pkgutil --payload-files "SpliceGroove-${VERSION}-macOS.pkg" | head -20
+                   "GrooveX-${VERSION}-macOS.pkg"
+          pkgutil --payload-files "GrooveX-${VERSION}-macOS.pkg" | head -20
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: Package zip (manual install)
         run: |
           mkdir -p dist
-          cp -R "build/SpliceGroove_artefacts/Release/AU/Splice Groove.component" dist/
-          cp -R "build/SpliceGroove_artefacts/Release/VST3/Splice Groove.vst3" dist/
+          cp -R "build/GrooveX_artefacts/Release/AU/Groove-X.component" dist/
+          cp -R "build/GrooveX_artefacts/Release/VST3/Groove-X.vst3" dist/
           cp install_mac.command dist/
-          cd dist && zip -r -y "../SpliceGroove-${VERSION}-macOS.zip" .
+          cd dist && zip -r -y "../GrooveX-${VERSION}-macOS.zip" .
 
       - uses: actions/upload-artifact@v4
         with:
-          name: SpliceGroove-macOS
+          name: GrooveX-macOS
           path: |
-            SpliceGroove-*-macOS.pkg
-            SpliceGroove-*-macOS.zip
+            GrooveX-*-macOS.pkg
+            GrooveX-*-macOS.zip
 
       - name: Publish GitHub Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release create "v${VERSION}" \
-            "SpliceGroove-${VERSION}-macOS.pkg" \
-            "SpliceGroove-${VERSION}-macOS.zip" \
-            --title "Splice Groove ${VERSION}" \
-            --notes "Installer per macOS (Apple Silicon + Intel). Scarica il .pkg, tasto destro > Apri, segui l'installazione. In Logic: Software Instrument > AU Instruments > Andrea Grasselli > Splice Groove."
+            "GrooveX-${VERSION}-macOS.pkg" \
+            "GrooveX-${VERSION}-macOS.zip" \
+            --title "Groove-X ${VERSION}" \
+            --notes "Installer per macOS (Apple Silicon + Intel). Scarica il .pkg, tasto destro > Apri, segui l'installazione. In Logic: Software Instrument > AU Instruments > Tune Talks > Groove-X."

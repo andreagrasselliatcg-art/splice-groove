@@ -827,10 +827,10 @@ void SpliceGrooveEditor::paint (juce::Graphics& g)
 
     g.setColour (juce::Colours::white);
     g.setFont (juce::FontOptions (30.0f, juce::Font::bold | juce::Font::italic));
-    g.drawText ("Splice Groove", 20, 6, 260, 40, juce::Justification::centredLeft);
+    g.drawText ("Groove-X", 20, 6, 260, 40, juce::Justification::centredLeft);
     g.setColour (col::orange);
     g.setFont (juce::FontOptions (12.0f, juce::Font::bold));
-    g.drawText ("GROOVE COMPOSER  SG-26", 22, 42, 260, 16, juce::Justification::centredLeft);
+    g.drawText ("GROOVE COMPOSER  GX-26", 22, 42, 260, 16, juce::Justification::centredLeft);
 
     // tempo LCD
     auto lcd = juce::Rectangle<float> ((float) kW - 500.0f, 20.0f, 170.0f, 40.0f);

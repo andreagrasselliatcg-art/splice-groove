@@ -1,6 +1,6 @@
-# Splice Groove: generatore di pattern di batteria per Logic Pro (AU / VST3)
+# Groove-X: generatore di pattern di batteria per Logic Pro (AU / VST3)
 
-Splice Groove è uno strumento virtuale che **genera pattern di batteria** in 5 generi e li suona
+Groove-X è uno strumento virtuale che **genera pattern di batteria** in 5 generi e li suona
 con i **campioni Splice che hai già scaricato** sul Mac. Il pattern va a tempo con Logic, e puoi
 trascinarlo nella timeline come regione MIDI.
 
@@ -29,7 +29,7 @@ hai già scaricato con l'app Splice, che li salva in locale (di default in `~/Sp
 ## Installazione
 
 ### Il modo più semplice: installer .pkg
-Scarica **`SpliceGroove-x.y.z-macOS.pkg`** dalla pagina
+Scarica **`GrooveX-x.y.z-macOS.pkg`** dalla pagina
 [Releases](https://github.com/andreagrasselliatcg-art/splice-groove/releases/latest), poi fai
 **tasto destro → Apri** e segui l'installazione. Il plugin va in `/Library/Audio/Plug-Ins`
 (AU + VST3, Apple Silicon + Intel).
@@ -42,7 +42,7 @@ Logic Pro usa solo plugin **Audio Unit (AU)**, che vanno compilati su un Mac. Se
 1. Crea un repository su GitHub (anche privato) e carica tutta questa cartella.
 2. GitHub compila da solo il plugin (tab **Actions** → "Build macOS (AU + VST3)", circa 10 minuti).
    La build verifica anche il plugin con `auval`, il validatore ufficiale di Apple.
-3. Scarica l'artifact **SpliceGroove-macOS.zip**, decomprimilo e fai doppio clic su
+3. Scarica l'artifact **GrooveX-macOS.zip**, decomprimilo e fai doppio clic su
    **`install_mac.command`**. Se macOS lo blocca: tasto destro → Apri.
 
 ### Opzione B: compilare sul tuo Mac
@@ -50,11 +50,11 @@ Logic Pro usa solo plugin **Audio Unit (AU)**, che vanno compilati su un Mac. Se
 ```bash
 xcode-select --install      # una volta sola
 brew install cmake          # una volta sola
-cd SpliceGroove
+cd GrooveX
 ./build_mac.sh              # compila, installa e valida
 ```
 
-Poi in Logic: **nuova traccia Software Instrument → AU Instruments → Andrea Grasselli → Splice Groove**.
+Poi in Logic: **nuova traccia Software Instrument → AU Instruments → Tune Talks → Groove-X**.
 
 ---
 

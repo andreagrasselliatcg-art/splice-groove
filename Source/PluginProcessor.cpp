@@ -43,7 +43,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout SpliceGrooveProcessor::creat
 
 SpliceGrooveProcessor::SpliceGrooveProcessor()
     : AudioProcessor (BusesProperties().withOutput ("Output", juce::AudioChannelSet::stereo(), true)),
-      apvts (*this, nullptr, "SpliceGroove", createLayout())
+      apvts (*this, nullptr, "GrooveX", createLayout())
 {
     formatManager.registerBasicFormats();
     events.reserve (2048);
@@ -411,7 +411,7 @@ void SpliceGrooveProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
 juce::String SpliceGrooveProcessor::suggestedMidiName (int bars) const
 {
     auto name = genreInfo (getGenre()).name.removeCharacters (" ");
-    return "SpliceGroove_" + name + "_" + juce::String (juce::roundToInt (getEffectiveBpm())) + "bpm_"
+    return "GrooveX_" + name + "_" + juce::String (juce::roundToInt (getEffectiveBpm())) + "bpm_"
            + juce::String (bars) + "bars";
 }
 
@@ -450,7 +450,7 @@ juce::MidiFile SpliceGrooveProcessor::createMidiFile (int bars) const
 
 juce::File SpliceGrooveProcessor::writeMidiToTempFile (int bars) const
 {
-    auto dir = juce::File::getSpecialLocation (juce::File::tempDirectory).getChildFile ("SpliceGroove");
+    auto dir = juce::File::getSpecialLocation (juce::File::tempDirectory).getChildFile ("GrooveX");
     dir.createDirectory();
     auto file = dir.getChildFile (suggestedMidiName (bars) + ".mid");
     file.deleteFile();
